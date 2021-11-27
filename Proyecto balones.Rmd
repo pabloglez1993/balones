@@ -2,7 +2,7 @@
 title: "Proyecto balones"
 author: "Pablo Gonzalez"
 date: "11/27/2021"
-output: html_document
+output: rmarkdown::github_document
 ---
 
 ```{r setup}
