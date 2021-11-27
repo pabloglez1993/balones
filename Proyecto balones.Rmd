@@ -1,0 +1,77 @@
+---
+title: "Proyecto balones"
+author: "Pablo Gonzalez"
+date: "11/27/2021"
+output: html_document
+---
+
+```{r setup}
+rm(list=ls())
+
+# Librer?a
+library(tidymodels)
+library(readxl)
+library(fastDummies)
+library(brms)
+
+
+datos <- read_excel("/Users/pablo/Library/CloudStorage/OneDrive-ITESO/Maestría en Ciencia de Datos/Semestre 3/Optimización Convexa/Proyecto/datos_11_9_21_FG.xlsx")
+
+
+# Librer?a fastDummies para convertir variables a dummy y quitar 1 categor?a de cada variable.
+datos_dummy <- dummy_cols(datos,  select_columns = c("Marca", "Diseno"),remove_first_dummy = TRUE)
+
+#Limpiar datos para quitar variables repetidas o que no se van a usar 
+datos_dummy1 <- subset(datos_dummy,select=-c(RES,Marca,Diseno))
+
+#Renombrar la primera columna
+names(datos_dummy1)[1] <- "Y"
+
+datos_dummy1 <- data.frame(datos_dummy1)
+
+# modelo bernoulli
+fit <- brm(Y ~ Diseno_Del_mundial+
+             Precio+
+             Marca_Gaser+
+             Diseno_Fondo_blanco+
+             Marca_Molten+
+             Marca_Voit +
+             Diseno_Colorido+
+             Diseno_Con_tematica,
+           data = datos_dummy1, 
+           family = bernoulli(link = "logit"), 
+           silent=TRUE, 
+           refresh = -1,
+           prior = c(set_prior("normal(-1,1)", class="b", coef="Marca_Gaser"), 
+                     set_prior("normal(1, 1)", class="b", coef="Marca_Voit"), 
+                     set_prior("normal(0, 1)", class="b", coef="Marca_Molten") 
+                    ), 
+)
+
+summary(fit)
+
+loss <- function(price){
+  # First Create the input data to predict with out model - we want to predict whether or not our phone will sell
+  our.ball <- data.frame(Diseno_Del_mundial=0,
+                            Precio=price,
+                            Marca_Gaser=1,
+                            Diseno_Fondo_blanco=1,
+                            Marca_Molten=0,
+                            Marca_Voit=0,
+                            Diseno_Colorido=0,
+                            Diseno_Con_tematica=0
+                            ) 
+  
+  # Next, for each posterior sample from out model, predict whether or not our phone would sell at the given price. This will give a vector of 0's and 1's, did the phone sell in each posterior sample. Think of each posterior sample as a simulation. 
+  pp <- posterior_predict(fit, newdata=our.ball)
+  
+  # Next calculate the expected return for each of these posterior simulations
+  mean(pp*price)
+}
+
+(op <- optim(100, function(x) -loss(x)))
+
+x <- 90:1200 # Listing prices to evaluate
+l <- sapply(x, loss) 
+plot(x, l, xlab = "Listing Price", ylab = "Expected Return")
+```
