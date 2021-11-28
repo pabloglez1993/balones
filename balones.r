@@ -1,13 +1,12 @@
 rm(list=ls())
 
 # Librer?a
-library(tidymodels)
 library(readxl)
 library(fastDummies)
 library(brms)
 
 
-datos <- read_excel("/Users/pablo/Library/CloudStorage/OneDrive-ITESO/Maestría en Ciencia de Datos/Semestre 3/Optimización Convexa/Proyecto/datos_11_9_21_FG.xlsx")
+datos <- read_excel("datos_11_9_21_FG.xlsx")
 
 
 # Librer?a fastDummies para convertir variables a dummy y quitar 1 categor?a de cada variable.

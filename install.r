@@ -1,1 +1,3 @@
-holepunch::write_install()
+install.packages("readxl")
+install.packages("fastDummies")
+install.packages("brms")
