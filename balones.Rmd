@@ -1,5 +1,10 @@
 ---
 title: "Balones"
+knit: (function(input_file, encoding) {
+  out_dir <- 'docs';
+  rmarkdown::render(input_file,
+ encoding=encoding,
+ output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
 date: "11/27/2021"
 output: html_document
 ---
@@ -10,15 +15,19 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## R Markdown
 
-```{r balones, echo=FALSE}
+Librerías:
+
+```{r balones}
 rm(list=ls())
 
-# Librer?a
 library(readxl)
 library(fastDummies)
 library(brms)
+```
 
+Datos:
 
+```{r}
 datos <- read_excel("datos_11_9_21_FG.xlsx")
 
 
@@ -31,12 +40,12 @@ datos_dummy1 <- subset(datos_dummy,select=-c(RES,Marca,Diseno))
 #Renombrar la primera columna
 names(datos_dummy1)[1] <- "Y"
 
-# Normalizamos
-datos_dummy1$Precio <- datos_dummy1$Precio
-
 datos_dummy1 <- data.frame(datos_dummy1)
+```
 
+Modelo:
 
+```{r}
 # modelo bernoulli
 fit <- brm(Y ~ Diseno_Del_mundial+
              Precio+
@@ -57,6 +66,11 @@ fit <- brm(Y ~ Diseno_Del_mundial+
 )
 
 summary(fit)
+```
+
+Función:
+
+```{r}
 
 loss <- function(price){
   # First Create the input data to predict with out model - we want to predict whether or not our phone will sell
@@ -78,7 +92,11 @@ loss <- function(price){
 }
 
 (op <- optim(100, function(x) -loss(x)))
+```
 
+Gráfica:
+
+```{r}
 x <- 90:1200 # Listing prices to evaluate
 l <- sapply(x, loss) 
 plot(x, l, xlab = "Listing Price", ylab = "Expected Return")
