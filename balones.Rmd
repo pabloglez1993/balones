@@ -1,3 +1,16 @@
+---
+title: "Balones"
+date: "11/27/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r balones, echo=FALSE}
 rm(list=ls())
 
 # Librer?a
@@ -69,3 +82,4 @@ loss <- function(price){
 x <- 90:1200 # Listing prices to evaluate
 l <- sapply(x, loss) 
 plot(x, l, xlab = "Listing Price", ylab = "Expected Return")
+```
