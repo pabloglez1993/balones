@@ -27,6 +27,8 @@ library(brms)
 
 Datos:
 
+Debido a que los datos de Marca, Diseño son categóricos, los convertimos a dummies usando código de R.
+
 ```{r}
 datos <- read_excel("datos_11_9_21_FG.xlsx")
 
@@ -44,6 +46,14 @@ datos_dummy1 <- data.frame(datos_dummy1)
 ```
 
 Modelo:
+
+Regresión logística
+Es un tipo de análisis de regresión utilizado para predecir la probabilidad de una variable categórica en función de variables predictoras. Este tipo de análisis se enmarca en el conjunto de Modelos lineales Generalizados usando una función de enlace logit. 
+
+Con Optimización NelderMead
+Es un método numérico para minimizar, en nuestro caso maximizar una función objetivo en un espacio multidimensional.  El método utiliza el concepto de un simplex, que es un politopo de N+1 vértices en N dimensiones: un segmento de línea en una línea, un triángulo en un plano, un tetraedro en un espacio tridimensional y así sucesivamente.
+
+Dado que se conoce que la preferencia por Gaser < Molten < Voit
 
 ```{r}
 # modelo bernoulli
@@ -95,6 +105,12 @@ loss <- function(price){
 ```
 
 Gráfica:
+
+Los modelos bayesianos nos permiten incluir información previa.
+
+Podemos actualizar el modelo después de una campaña promocional de Gaser.
+
+Es viable replicar el modelo para otras configuraciones de balones para estimar el ingreso máximo experado.
 
 ```{r}
 x <- 90:1200 # Listing prices to evaluate
